@@ -55,6 +55,19 @@ var requestHandler = function(request, response) {
   var parsedURL = url.parse(request.url).pathname;
   parsedURL = parsedURL.split('/');
 
+  if (request.method === 'OPTIONS') {
+    // add needed headers
+    var headers = {};
+    headers["Access-Control-Allow-Origin"] = "*";
+    headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+    headers["Access-Control-Allow-Credentials"] = true;
+    headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+    headers["Access-Control-Allow-Headers"] = "X-Requested-With, Access-Control-Allow-Origin, X-HTTP-Method-Override, Content-Type, Authorization, Accept";
+    // respond to the request
+    response.writeHead(200, headers);
+    response.end();
+  }
+
   if (parsedURL[1] !== 'classes') {
     statusCode = 404;
     headers['Content-Type'] = "application/JSON";
@@ -63,7 +76,7 @@ var requestHandler = function(request, response) {
   }
   if(request.method === 'POST') {
     collectData(request, function(data){
-      results.push(data);
+    results.push(data);
     console.log("after POST: ", results);
 
       statusCode = 201;
